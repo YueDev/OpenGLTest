@@ -1,0 +1,4 @@
+"D:\Program Files\JetBrains\CLion\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" D:\CPP\Demo\OpenGLTest
+-- Configuring done
+-- Generating done
+-- Build files have been written to: D:/CPP/Demo/OpenGLTest/cmake-build-debug

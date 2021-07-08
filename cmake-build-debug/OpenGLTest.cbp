@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="OpenGLTest"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="D:/CPP/Demo/OpenGLTest/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="OpenGLTest">
+				<Option output="D:/CPP/Demo/OpenGLTest/cmake-build-debug/OpenGLTest.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="D:/CPP/Demo/OpenGLTest/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="D:/CPP/Demo/OpenGLTest/include"/>
+					<Add directory="D:/CPP/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++"/>
+					<Add directory="D:/CPP/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/CPP/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/backward"/>
+					<Add directory="D:/CPP/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include"/>
+					<Add directory="D:/CPP/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include-fixed"/>
+					<Add directory="D:/CPP/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 OpenGLTest"/>
+					<CompileFile command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="OpenGLTest/fast">
+				<Option output="D:/CPP/Demo/OpenGLTest/cmake-build-debug/OpenGLTest.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="D:/CPP/Demo/OpenGLTest/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="D:/CPP/Demo/OpenGLTest/include"/>
+					<Add directory="D:/CPP/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++"/>
+					<Add directory="D:/CPP/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/CPP/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/backward"/>
+					<Add directory="D:/CPP/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include"/>
+					<Add directory="D:/CPP/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include-fixed"/>
+					<Add directory="D:/CPP/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 OpenGLTest/fast"/>
+					<CompileFile command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="D:/CPP/Demo/OpenGLTest/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="D:/CPP/Demo/OpenGLTest/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/CPP/mingw64/bin/mingw32-make.exe -f &quot;D:/CPP/Demo/OpenGLTest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="D:/CPP/Demo/OpenGLTest/src/Shader.cpp">
+			<Option target="OpenGLTest"/>
+		</Unit>
+		<Unit filename="D:/CPP/Demo/OpenGLTest/src/Shader.h">
+			<Option target="OpenGLTest"/>
+		</Unit>
+		<Unit filename="D:/CPP/Demo/OpenGLTest/src/glad.c">
+			<Option target="OpenGLTest"/>
+		</Unit>
+		<Unit filename="D:/CPP/Demo/OpenGLTest/src/main.cpp">
+			<Option target="OpenGLTest"/>
+		</Unit>
+		<Unit filename="D:/CPP/Demo/OpenGLTest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

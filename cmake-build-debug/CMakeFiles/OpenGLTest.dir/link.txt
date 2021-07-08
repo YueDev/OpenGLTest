@@ -1,0 +1,3 @@
+"D:\Program Files\JetBrains\CLion\bin\cmake\win\bin\cmake.exe" -E rm -f CMakeFiles\OpenGLTest.dir/objects.a
+D:\CPP\mingw64\bin\ar.exe cr CMakeFiles\OpenGLTest.dir/objects.a @CMakeFiles\OpenGLTest.dir\objects1.rsp
+D:\CPP\mingw64\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\OpenGLTest.dir/objects.a -Wl,--no-whole-archive -o OpenGLTest.exe -Wl,--out-implib,libOpenGLTest.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\OpenGLTest.dir\linklibs.rsp
