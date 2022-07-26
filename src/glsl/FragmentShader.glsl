@@ -10,5 +10,5 @@ uniform sampler2D stickerTexture;
 out vec4 outColor;
 
 void main() {
-    outColor =mix(texture(hanaTexture, texCoord), texture(stickerTexture, texCoord), mixf);
+    outColor = mix(texture(hanaTexture, texCoord), texture(stickerTexture, texCoord), mixf);
 }

@@ -20,8 +20,8 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
 void processInput(GLFWwindow *window);
 
-int screenW = 800;
-int screenH = 600;
+int screenW = 1920;
+int screenH = 1080;
 
 
 int main() {
@@ -39,7 +39,7 @@ int main() {
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     //定义一个window对象
-    GLFWwindow *window = glfwCreateWindow(800, 600, "OpenGL Test", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(screenW, screenH, "OpenGL Test", nullptr, nullptr);
     if (window == nullptr) {
         //如果window对象为空，中止glfw
         std::cout << "Failed to create GLFW window" << std::endl;
