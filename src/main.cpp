@@ -39,7 +39,7 @@ int main() {
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     //定义一个window对象
-    GLFWwindow *window = glfwCreateWindow(800, 600, "OpenGL Test", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(screenW, screenH, "OpenGL Test", nullptr, nullptr);
     if (window == nullptr) {
         //如果window对象为空，中止glfw
         std::cout << "Failed to create GLFW window" << std::endl;
