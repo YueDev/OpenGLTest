@@ -148,7 +148,7 @@ int main() {
     glBindVertexArray(0);
 
 
-    auto *shader = new Shader("../src/glsl/vertex_shader.glsl","../src/glsl/fragment_shader.glsl");
+    auto *shader = new Shader("../src/glsl/vertex_shader.glsl", "../src/glsl/fragment_shader.glsl");
     shader->use();
 
     // render loop 渲染循环
