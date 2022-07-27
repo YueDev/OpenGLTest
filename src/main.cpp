@@ -22,24 +22,39 @@ int screenH = 1080;
 //顶点着色器的源码，从vertex_shader.glsl复制过来，省去操作文件IO
 const char *vertexShaderString = "#version 330 core\n"
                                  "layout(location = 0) in vec3 aPos;\n"
+                                 "layout(location = 1) in vec3 aColor;\n"
+                                 "\n"
+                                 "out vec4 vertexColor;\n"
                                  "\n"
                                  "void main() {\n"
-                                 "    gl_Position = vec4(aPos.xyz, 1.0);\n"
+                                 "    gl_Position = vec4(aPos.xyz, 1.0f);\n"
+                                 "    vertexColor = vec4(aColor,  1.0f);\n"
                                  "}";
 //片段着色器的源码，从fragment_shader.glsl复制过来
 const char *fragmentShaderString = "#version 330 core\n"
                                    "\n"
+                                   "in vec4 vertexColor;\n"
+                                   "\n"
+                                   "uniform vec4 outColor;\n"
+                                   "\n"
                                    "out vec4 FragColor;\n"
                                    "\n"
                                    "void main() {\n"
-                                   "    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+                                   "    FragColor = vertexColor;\n"
                                    "}";
 //顶点坐标的数组，会通过VBO传给显卡
 float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f,
+        -0.5f, 0.5f, 0.0f, 0.8f, 0.2f, 0.2f, // 左上角   颜色
+        -0.5f, -0.5f, 0.0f, 0.2f, 0.8f, 0.2f, // 左下角  颜色
+        0.5f, -0.5f, 0.0f, 0.2f, 0.2f, 0.8f, // 右下角 颜色
+        0.5f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, // 右上角 颜色
 };
+//索引 ebo用
+unsigned int indices[] = {
+        0, 1, 2,
+        0, 2, 3,
+};
+
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
@@ -108,12 +123,26 @@ int main() {
     //GL_FLOAT vec3是浮点数，因此用GL_FLOAT
     //3 * sizeof(float)  步长，每组数据的长度，由于我们数据是3个float一组，因此用3 * sizeof(float)
     //(void *) 0 偏移量 数据开始的偏移量，这里攻略上写的是(void *) 0，IDE提示我用nullptr
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
     //启用着色器layout(location = 0)这个属性，默认是关闭的，必须打开，顶点着色器里的layout(location = 0)才会生效
     glEnableVertexAttribArray(0);
-    //解绑当前的ARRAY_BUFFER，方便之后绑定其他的ARRAY_BUFFER
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    //解释layout(location = 0) 并启用
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *) (3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    //解绑当前的ARRAY_BUFFER，方便之后绑定其他的ARRAY_BUFFER 如果没必要建议不解绑，这里做演示
+    glBindBuffer(GL_ARRAY_BUFFER, 1);
     //===========================以上是VBO相关========================================
+
+    //生成EBO，和VBO一样也是附着在VAO上
+    unsigned int EBO;
+    glGenBuffers(1, &EBO);
+    //绑定ELEMENT_ARRAY_BUFFER 到EBO对象
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    //与VBO不同，EBO操作完成后不要解绑，因为EBO附着在VAO里，一个VAO有且只有一个EBO，解绑意味当前VAO绑定了一个空的EBO
+
     //解绑当前的VAO，之后可以绑定并操作其他的VAO， 攻略上写的如果只有一个VAO不建议解绑
     //这里可以不用解绑，因为只绘制一个VAO，如果解绑了在绘制的时候再绑定即可
     glBindVertexArray(0);
@@ -151,7 +180,7 @@ int main() {
     glLinkProgram(shaderProgram);
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
     if (!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+        glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
         std::cout << "ERROR::PROGRAM::LINK_PROGRAM_FAILED\n" << infoLog << std::endl;
         return -1;
     }
@@ -179,17 +208,31 @@ int main() {
         //2.2 绘制内容
         // 选择绘制的程序，之前设定了，我们不需要多个程序，因此注释掉
         // glUseProgram(shaderProgram);
-        //绑定要绘制的VAO
-//        glBindVertexArray(VAO);
-        //绘制三角形,0是数组起始的编号，3是打算绘制多少个顶点，因为我们数据中只有3个点的坐标，因此写3即可
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        //解绑VAO，之后可以绘制其他VAO  我们这里只绘制1个VAO，不用解绑因此注释掉了
-//        glBindVertexArray(0);
+
+        //uniform
+//        auto time = (float) glfwGetTime();
+//        float green = sin(time) / 2.0f + 0.5f;
+//        int colorUniformLocation = glGetUniformLocation(shaderProgram, "outColor");
+//        glUniform4f(colorUniformLocation, 0.0f, green, 0.0f, 1.0f);
+//
+
+        //绑定要绘制的VAO 我们只有1个VAO，因此在渲染外绑定即可，
+        glBindVertexArray(VAO);
+        //绘制当前VAO的EBO
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        //解绑VAO，之后可以绘制其他VAO  我们这里只绘制1个VAO，其实可以不用解绑
+        glBindVertexArray(0);
 
         //3、检查并调用事件，交换缓冲
         glfwPollEvents();
         glfwSwapBuffers(window);
     }
+
+    //释放资源，删除顶点数组VAO，两个缓冲：顶点缓冲VBO和元素/索引缓冲EBO
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+    glDeleteProgram(shaderProgram);
 
     //程序结束 中止glfw
     glfwTerminate();
