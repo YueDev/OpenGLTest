@@ -148,49 +148,8 @@ int main() {
     glBindVertexArray(0);
 
 
-    //GLuint就是unsigned int
-    //这里先创建一个VERTEX_SHADER对象vertexShader， 然后把shader的string传给这个对象，最后编译这个对象
-    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderString, nullptr);
-    glCompileShader(vertexShader);
-    //检查编译结果
-    int success;
-    char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-        return -1;
-    }
-
-    //同上，fragment shader
-    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderString, nullptr);
-    glCompileShader(fragmentShader);
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-        return -1;
-    }
-    //链接着色器，生成程序
-    unsigned int shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
-        std::cout << "ERROR::PROGRAM::LINK_PROGRAM_FAILED\n" << infoLog << std::endl;
-        return -1;
-    }
-
-    //程序生成后，删除着色器对象即可
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-    //使用程序
-    glUseProgram(shaderProgram);
-
+    auto *shader = new Shader("../src/glsl/vertex_shader.glsl","../src/glsl/fragment_shader.glsl");
+    shader->use();
 
     // render loop 渲染循环
     while (!glfwWindowShouldClose(window)) {
@@ -232,7 +191,7 @@ int main() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
-    glDeleteProgram(shaderProgram);
+    shader->clear();
 
     //程序结束 中止glfw
     glfwTerminate();
