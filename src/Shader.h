@@ -1,23 +1,31 @@
 //
-// Created by Lenovo on 2021/4/26.
+// Created by Yue on 2022/7/27.
 //
+
 #ifndef OPENGLTEST_SHADER_H
 #define OPENGLTEST_SHADER_H
 
+#include <glad/glad.h> // 包含glad来获取所有的必须OpenGL头文件
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+
+using namespace std;
 
 class Shader {
 public:
+    unsigned int programId;
 
-    unsigned int programID;
+    //构造器 读取着色器的路径 生成programId
+    Shader(const string& vertexPath, const string& fragmentPath);
 
-    Shader(const char *vertexPath, const char *fragmentPath);
+    void use() const;
 
-    void useProgram() const;
+    void clear() const;
 
-    void deleteProgram() const;
-    void setTexture(const char *textureName, int textureIndex) const;
-    void setMix(float mix) const;
-    void setCoordMatrix(float *modelMatrix, float *viewMatrix, float *projectionMatrix) const;
+    void setTexture(const string &textureName, int textureUnitId) const;
 };
+
 
 #endif //OPENGLTEST_SHADER_H

@@ -15,83 +15,28 @@
 
 #include "Shader.h"
 
+//窗口的的长宽
+int screenW = 1920;
+int screenH = 1080;
+
+
+//顶点坐标的数组，会通过VBO传给显卡
+float vertices[] = {
+        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, // 左上角   纹理坐标
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // 左下角   纹理坐标
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  // 右下角  纹理坐标
+        0.5f, 0.5f, 0.0f, 1.0f, 1.0f, // 右上角  纹理坐标
+};
+//索引 ebo用
+unsigned int indices[] = {
+        0, 1, 2,
+        0, 2, 3,
+};
+
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
 void processInput(GLFWwindow *window);
-
-void setMix(float delta);
-
-void setRotate(float delta);
-
-void setCameraZ(float delta);
-
-void setCenterY(float delta);
-//顶点坐标  顶点颜色  纹理坐标
-float vertices[] = {
-        //扩展为 6个面的立方体，这是正面
-        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,  // tl  0
-        -0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, // bl  1
-        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,  // br  2
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,     //tr   3
-
-        //后面
-        0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // tl  4
-        0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,  //bl  5
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, // br  6
-        -0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,   //tr   7
-
-        // 右面
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,  // tl  8
-        0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, // bl  9
-        0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,  // br  10
-        0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,     //tr   11
-        //左面
-        -0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,  // tl  12
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, // bl  13
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,  // br  14
-        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,     //tr   15
-        //上面
-        -0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,  // tl  16
-        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, // bl  17
-        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,  // br  18
-        0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,     //tr   19
-        //下面
-        -0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,  // tl  20
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, // bl  21
-        0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,  // br  22
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,     //tr   23
-
-};
-
-
-unsigned int indices[] = {
-        0, 1, 2,
-        0, 2, 3,
-        4, 5, 6,
-        4, 6, 7,
-        8, 9, 10,
-        8, 10, 11,
-        12, 13, 14,
-        12, 14, 15,
-        16, 17, 18,
-        16, 18, 19,
-        20, 21, 22,
-        20, 22, 23
-};
-
-
-float mix = 0.0f;
-
-float rotate = -45.0f;
-
-float cameraZ = 3.0f;
-
-float centerY = 0.0f;
-
-int screenW = 800;
-int screenH = 600;
-
 
 
 int main() {
@@ -109,7 +54,7 @@ int main() {
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     //定义一个window对象
-    GLFWwindow *window = glfwCreateWindow(800, 600, "OpenGL Test", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(screenW, screenH, "OpenGL Test", nullptr, nullptr);
     if (window == nullptr) {
         //如果window对象为空，中止glfw
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -127,6 +72,7 @@ int main() {
         return -1;
     }
 
+
     //设置opengl的视窗大小
     // opengl坐标范围是[-1 ,1] ，通过设置这个可以让opengl把坐标映射到800, 600
     glViewport(0, 0, screenW, screenH);
@@ -136,136 +82,117 @@ int main() {
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    //开启深度测试，这样可以使用Z缓冲
-    glEnable(GL_DEPTH_TEST);
 
-
-    int num;
-    //检查vao最大有几个位置可以绑定vbo
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &num);
-    std::cout << "MAX VERTEX ATTRIBS: " << num << std::endl;
-
-    //先初始化shader类
-    auto *shader = new Shader("../src/glsl/VertexShader.glsl", "../src/glsl/FragmentShader.glsl");
-
-
-    //配置完成后，准备渲染前，先定义各种数据
-
+    //创建一个顶点数组VERTEX ARRAY，用来管理VBO
     unsigned int VAO;
     glGenVertexArrays(1, &VAO);
-
+    //绑定当前VAO，这样之后的VBO操作都是和这个VAO相关了
+    glBindVertexArray(VAO);
+    //===========================以下是VBO相关========================================
+    //创建一个ARRAY BUFFER，并绑定在VBO上，这样之后对ARRAY BUFFER的操作都是对VBO的操作
+    //通过bufferdata，把顶点数据放到显存中了，用VBO这个对象来管理这些数据
     unsigned int VBO;
     glGenBuffers(1, &VBO);
-
-    unsigned int EBO;
-    glGenBuffers(1, &EBO);
-
-
-
-    //绑定第一个VAO
-    glBindVertexArray(VAO);
-
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) nullptr);
+    //解释ARRAY BUFFER里的数据
+    //0 就是顶点着色器里的layout(location = 0)，表示数据是传送到0号
+    //3  是顶点着色器里的属性有几个数据组成，我们定义的aPos是vec3，因此一个属性需要3个数据
+    //GL_FLOAT vec3是浮点数，因此用GL_FLOAT
+    //3 * sizeof(float)  步长，每组数据的长度，由于我们数据是3个float一组，因此用3 * sizeof(float)
+    //(void *) 0 偏移量 数据开始的偏移量，这里攻略上写的是(void *) 0，IDE提示我用nullptr
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), nullptr);
+    //启用着色器layout(location = 0)这个属性，默认是关闭的，必须打开，顶点着色器里的layout(location = 0)才会生效
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) (3 * sizeof(float)));
+    //解释layout(location = 1) 并启用
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) (3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) (6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
 
+    //解绑当前的ARRAY_BUFFER，方便之后绑定其他的ARRAY_BUFFER 如果没必要建议不解绑，这里做演示
+    glBindBuffer(GL_ARRAY_BUFFER, 1);
+    //===========================以上是VBO相关========================================
 
+    //生成EBO，和VBO一样也是附着在VAO上
+    unsigned int EBO;
+    glGenBuffers(1, &EBO);
+    //绑定ELEMENT_ARRAY_BUFFER 到EBO对象
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    //与VBO不同，EBO操作完成后不要解绑，因为EBO附着在VAO里，一个VAO有且只有一个EBO，解绑意味当前VAO绑定了一个空的EBO
+
+    //解绑当前的VAO，之后可以绑定并操作其他的VAO， 攻略上写的如果只有一个VAO不建议解绑
+    //这里可以不用解绑，因为只绘制一个VAO，如果解绑了在绘制的时候再绑定即可
+    glBindVertexArray(0);
+
 
 
     //纹理
+    //生成纹理，并绑定当前GL_TEXTURE_2D的纹理为GL_TEXTURE_2D
     unsigned int texture[2];
-    //生成2D纹理
     glGenTextures(2, texture);
-
-    //激活0号纹理
-    glActiveTexture(GL_TEXTURE0);
-    //绑定texture[0]到0号纹理
     glBindTexture(GL_TEXTURE_2D, texture[0]);
-    //设置纹理的环绕方式
+    // 为当前绑定的纹理对象设置环绕、过滤方式
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    //设置纹理的放大缩小的过滤方式
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //只有缩小的时候才用到mipmap，放大不设置mipmap
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-
-
-    //使用stbimage读取图片数据
-    int width, height, channelNum;
-    //设置y轴翻转，stdb默认（0， 0）是左上角，而opengl纹理坐标(0, 0)点是左下角
-    stbi_set_flip_vertically_on_load(1);
-    unsigned char *imgData = stbi_load("../src/resources/1.jpg", &width, &height, &channelNum, 0);
-
-    if (imgData) {
-        //把图片数据设置到纹理上
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imgData);
-        //设置mipmap
+    //stb image 读取图片
+    int imageW;
+    int imageH;
+    int imageChannels;
+    //设置stb反转y轴
+    stbi_set_flip_vertically_on_load(true);
+    auto *imageData = stbi_load("../src/resources/1.jpg", &imageW, &imageH, &imageChannels, 0);
+    if (imageData) {
+        //设置纹理数据
+        //GL_TEXTURE_2D :纹理目标
+        //0： mipmap的级别，默认级别0
+        //GL_RGB： 设置纹理的颜色格式
+        //imageW： 图片宽度
+        //imageH:  图片高度
+        //0:   历史遗留 必须为0
+        //GL_RGB: 图片的颜色格式
+        //GL_UNSIGNED_BYTE: 图片的数据格式
+        //imageData: 图片的数据
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageW, imageH, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {
-        std::cout << "Failed to load image" << std::endl;
+        cout << "load image1 error!" << endl;
         return -1;
     }
 
-    //设置完纹理后清除图片数据
-    stbi_image_free(imgData);
 
-    //设置另一个纹理
+    //图片读取完成释放资源
+    stbi_image_free(imageData);
 
-    glActiveTexture(GL_TEXTURE1);
+    //另一个纹理
     glBindTexture(GL_TEXTURE_2D, texture[1]);
-    //设置纹理的环绕方式
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    //设置纹理的放大缩小的过滤方式
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
-
-    imgData = stbi_load("../src/resources/2.jpg", &width, &height, &channelNum, 0);
-
-    if (imgData) {
-        //把图片数据设置到纹理上 注意带透明，要用RGBA
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imgData);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    imageData = stbi_load("../src/resources/2.jpg", &imageW, &imageH, &imageChannels, 0);
+    if (imageData) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageW, imageH, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {
-        std::cout << "Failed to load image" << std::endl;
+        cout << "load image2 error!" << endl;
         return -1;
     }
-
-    //设置完纹理后清除图片数据
-    stbi_image_free(imgData);
-
-    //通过uniform  告诉sample2d用几号通道,记得先useProgram
-    shader->useProgram();
-    shader->setTexture("hanaTexture", 0);
-    shader->setTexture("stickerTexture", 1);
+    stbi_image_free(imageData);
 
 
+    //创建着色器程序 并设置各种uniform
+    auto *shader = new Shader("../src/glsl/vertex_shader.glsl", "../src/glsl/fragment_shader.glsl");
+    //在设置uniform之前一定要先使用当前的program
+    shader->use();
 
-    //10个立方体的世界坐标，model矩阵做完旋转 后乘即可
-    glm::vec3 cubePositions[] = {
-            glm::vec3(0.0f, 0.0f, 0.0f),
-            glm::vec3(2.0f, 5.0f, -15.0f),
-            glm::vec3(-1.5f, -2.2f, -2.5f),
-            glm::vec3(-3.8f, -2.0f, -12.3f),
-            glm::vec3(2.4f, -0.4f, -3.5f),
-            glm::vec3(-1.7f, 3.0f, -7.5f),
-            glm::vec3(1.3f, -2.0f, -2.5f),
-            glm::vec3(1.5f, 2.0f, -2.5f),
-            glm::vec3(1.5f, 0.2f, -1.5f),
-            glm::vec3(-1.3f, 1.0f, -1.5f)
-    };
+    //设置纹理单元，这样着色器就知道每一个sampler2D对应几号纹理单元了
+    shader->setTexture("imageTexture1", 0);
+    shader->setTexture("imageTexture2", 1);
 
 
     // render loop 渲染循环
@@ -273,80 +200,50 @@ int main() {
         //1、处理输入事件
         processInput(window);
 
-
         //2、进行渲染
 
-        //设置清空屏幕颜色，RGBA,    设置状态
+        //2.1清空屏幕上之前绘制的的内容，这里用颜色来覆盖之前的内容
+        // 设置清空屏幕颜色，RGBA,    设置状态
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        //清空屏幕，清空的是颜色，     使用状态  使用深度测试
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        //清空屏幕，清空的是颜色
+        glClear(GL_COLOR_BUFFER_BIT);
 
+        //2.2 绘制内容
+        // 选择绘制的程序，之前设定了，我们不需要多个程序，因此注释掉
+        // glUseProgram(shaderProgram);
 
-//        //获取当前时间秒，并通过sin函数/2 转换为-0.5到0.5，然后偏移0.5，让取值在0到1之间
-//        //这样大概每3.14秒一个周期，用来做颜色变换效果很好用
-//        double time = glfwGetTime();
-//        float greenValue = (sin(time) / 2.0f) + 0.5f;
+        //uniform
+//        auto time = (float) glfwGetTime();
+//        float green = sin(time) / 2.0f + 0.5f;
+//        int colorUniformLocation = glGetUniformLocation(shaderProgram, "outColor");
+//        glUniform4f(colorUniformLocation, 0.0f, green, 0.0f, 1.0f);
 //
 
-
-        //连接完成后，使用program
-        shader->useProgram();
-        shader->setMix(mix);
-
-
-
-        //坐标变换
-        //定义模型矩阵，视图矩阵、投影矩阵
-        //因为更改比较频繁，就放到渲染线程了
-
-        //这里用lookat构建camera的matrix
-        glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, cameraZ), glm::vec3(0.0f, centerY, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-
-        glm::mat4 projectionMatrix = glm::mat4(1.0f);
-
-        //ortho正射投影，没有远近变化
-        //        projectionMatrix = glm::ortho(-screenW * 1.0f / screenH, screenW * 1.0f / screenH, -1.0f, 1.0f, 0.1f, 100.0f);
-        projectionMatrix = glm::perspective(glm::radians(45.0f), screenW * 1.0f / screenH, 0.1f, 100.0f);
-
-
-//        //通过uniform把我们的数值传给opengl的program
-//        glUniform4f(ourColorUniform, 0.0f, greenValue, 0.0f, 1.0f);
-
-        //绘制前绑定纹理
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture[0]);
-        glActiveTexture(GL_TEXTURE1);
+        //绑定要绘制的VAO 我们只有1个VAO，也可以在渲染外绑定，
+        glBindVertexArray(VAO);
+        //激活并绑定纹理
+//        glActiveTexture(0);
+//        glBindTexture(GL_TEXTURE_2D, texture[0]);
+        glActiveTexture(1);
         glBindTexture(GL_TEXTURE_2D, texture[1]);
 
-
-        glBindVertexArray(VAO);
-
-        float angle = 20.0f;
-
-        for (const auto &position: cubePositions) {
-            glm::mat4 modelMatrix = glm::mat4(1.0f);
-            modelMatrix = glm::translate(modelMatrix, position);
-            float degree = glm::radians(angle);
-            if ((int) angle % 20) {
-                degree *= (float) glfwGetTime();
-            }
-            modelMatrix = glm::rotate(modelMatrix, degree, glm::vec3(1.0f, 0.3f, 0.5f));
-            angle += 10.0f;
-            shader->setCoordMatrix(glm::value_ptr(modelMatrix), glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix));
-            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
-        }
-
-
+        //绘制当前VAO的EBO
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        //解绑VAO，之后可以绘制其他VAO  我们这里只绘制1个VAO，其实可以不用解绑
+        glBindVertexArray(0);
 
         //3、检查并调用事件，交换缓冲
         glfwPollEvents();
         glfwSwapBuffers(window);
     }
 
+    //释放资源，删除顶点数组VAO，两个缓冲：顶点缓冲VBO和元素/索引缓冲EBO
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    shader->deleteProgram();
+    glDeleteBuffers(1, &EBO);
+    //释放纹理
+    glDeleteTextures(2, texture);
+    shader->clear();
 
     //程序结束 中止glfw
     glfwTerminate();
@@ -358,42 +255,13 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-//按下返回，关闭window
+//按键事件，按下返回，关闭window
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
-    } else if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
-        setMix(0.01f);
-    } else if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
-        setMix(-0.01f);
-    } else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        setCameraZ(-0.01f);
-    } else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        setCameraZ(0.01f);
-    } else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-        setCenterY(0.01f);
-    } else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-        setCenterY(-0.01f);
     }
 }
 
-void setMix(float delta) {
-    mix += delta;
-    mix = fmin(1.0f, fmax(0.0f, mix));
-}
-
-
-void setCameraZ(float delta) {
-    cameraZ += delta;
-    cameraZ = fmin(5.0f, fmax(0.1f, cameraZ));
-}
-
-void setCenterY(float delta) {
-    centerY += delta;
-    centerY = fmin(1.0f, fmax(-1.0f, centerY));
-    std::cout << centerY << std::endl;
-
-}
 
 
 
