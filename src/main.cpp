@@ -23,19 +23,21 @@ int screenH = 1080;
 const char *vertexShaderString = "#version 330 core\n"
                                  "layout(location = 0) in vec3 aPos;\n"
                                  "layout(location = 1) in vec3 aColor;\n"
+                                 "layout(location = 2) in vec2 aTexPos;\n"
                                  "\n"
                                  "out vec4 vertexColor;\n"
+                                 "out vec2 texPos;\n"
                                  "\n"
                                  "void main() {\n"
                                  "    gl_Position = vec4(aPos.xyz, 1.0f);\n"
                                  "    vertexColor = vec4(aColor,  1.0f);\n"
+                                 "    texPos = aTexPos;\n"
                                  "}";
 //片段着色器的源码，从fragment_shader.glsl复制过来
 const char *fragmentShaderString = "#version 330 core\n"
                                    "\n"
                                    "in vec4 vertexColor;\n"
-                                   "\n"
-                                   "uniform vec4 outColor;\n"
+                                   "in vec2 texPos;\n"
                                    "\n"
                                    "out vec4 FragColor;\n"
                                    "\n"
@@ -44,10 +46,10 @@ const char *fragmentShaderString = "#version 330 core\n"
                                    "}";
 //顶点坐标的数组，会通过VBO传给显卡
 float vertices[] = {
-        -0.5f, 0.5f, 0.0f, 0.8f, 0.2f, 0.2f, // 左上角   颜色
-        -0.5f, -0.5f, 0.0f, 0.2f, 0.8f, 0.2f, // 左下角  颜色
-        0.5f, -0.5f, 0.0f, 0.2f, 0.2f, 0.8f, // 右下角 颜色
-        0.5f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, // 右上角 颜色
+        -0.5f, 0.5f, 0.0f, 0.8f, 0.2f, 0.2f, 0.0f, 1.0f, // 左上角   颜色  纹理坐标
+        -0.5f, -0.5f, 0.0f, 0.2f, 0.8f, 0.2f, 0.0f, 0.0f, // 左下角  颜色 纹理坐标
+        0.5f, -0.5f, 0.0f, 0.2f, 0.2f, 0.8f, 1.0f, 0.0f,  // 右下角 颜色 纹理坐标
+        0.5f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f, 1.0f, // 右上角 颜色 纹理坐标
 };
 //索引 ebo用
 unsigned int indices[] = {
@@ -123,13 +125,17 @@ int main() {
     //GL_FLOAT vec3是浮点数，因此用GL_FLOAT
     //3 * sizeof(float)  步长，每组数据的长度，由于我们数据是3个float一组，因此用3 * sizeof(float)
     //(void *) 0 偏移量 数据开始的偏移量，这里攻略上写的是(void *) 0，IDE提示我用nullptr
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
     //启用着色器layout(location = 0)这个属性，默认是关闭的，必须打开，顶点着色器里的layout(location = 0)才会生效
     glEnableVertexAttribArray(0);
 
     //解释layout(location = 0) 并启用
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *) (3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) (3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    //解释layout(location = 1) 并启用
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) (6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     //解绑当前的ARRAY_BUFFER，方便之后绑定其他的ARRAY_BUFFER 如果没必要建议不解绑，这里做演示
     glBindBuffer(GL_ARRAY_BUFFER, 1);
@@ -148,6 +154,50 @@ int main() {
     glBindVertexArray(0);
 
 
+
+    //纹理
+    //生成纹理，并绑定当前GL_TEXTURE_2D的纹理为GL_TEXTURE_2D
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    // 为当前绑定的纹理对象设置环绕、过滤方式
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+
+    //stb image 读取图片
+    int imageW;
+    int imageH;
+    int imageChannels;
+    //设置stb反转y轴
+    stbi_set_flip_vertically_on_load(true);
+    auto *imageData = stbi_load("../src/resources/1.jpg", &imageW, &imageH, &imageChannels, 0);
+    if (imageData) {
+        //设置纹理数据
+        //GL_TEXTURE_2D :纹理目标
+        //0： mipmap的级别，默认级别0
+        //GL_RGB： 设置纹理的颜色格式
+        //imageW： 图片宽度
+        //imageH:  图片高度
+        //0:   历史遗留 必须为0
+        //GL_RGB: 图片的颜色格式
+        //GL_UNSIGNED_BYTE: 图片的数据格式
+        //imageData: 图片的数据
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageW, imageH, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+
+    } else {
+        cout << "load image error!" << endl;
+        return -1;
+    }
+    //解绑纹理 只有一个话不解绑也行
+    glBindTexture(GL_TEXTURE_2D, 0);
+    //图片读取完成释放资源
+    stbi_image_free(imageData);
+
+    //着色器程序
     auto *shader = new Shader("../src/glsl/vertex_shader.glsl", "../src/glsl/fragment_shader.glsl");
     shader->use();
 
@@ -177,6 +227,8 @@ int main() {
 
         //绑定要绘制的VAO 我们只有1个VAO，因此在渲染外绑定即可，
         glBindVertexArray(VAO);
+        //绘制之前绑定纹理
+        glBindTexture(GL_TEXTURE_2D, texture);
         //绘制当前VAO的EBO
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         //解绑VAO，之后可以绘制其他VAO  我们这里只绘制1个VAO，其实可以不用解绑
