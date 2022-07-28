@@ -164,7 +164,6 @@ int main() {
         return -1;
     }
 
-
     //图片读取完成释放资源
     stbi_image_free(imageData);
 
@@ -183,6 +182,8 @@ int main() {
         return -1;
     }
     stbi_image_free(imageData);
+
+
 
 
     //创建着色器程序 并设置各种uniform
@@ -209,22 +210,12 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         //2.2 绘制内容
-        // 选择绘制的程序，之前设定了，我们不需要多个程序，因此注释掉
-        // glUseProgram(shaderProgram);
-
-        //uniform
-//        auto time = (float) glfwGetTime();
-//        float green = sin(time) / 2.0f + 0.5f;
-//        int colorUniformLocation = glGetUniformLocation(shaderProgram, "outColor");
-//        glUniform4f(colorUniformLocation, 0.0f, green, 0.0f, 1.0f);
-//
-
-        //绑定要绘制的VAO 我们只有1个VAO，也可以在渲染外绑定，
         glBindVertexArray(VAO);
-        //激活并绑定纹理
-//        glActiveTexture(0);
-//        glBindTexture(GL_TEXTURE_2D, texture[0]);
-        glActiveTexture(1);
+
+        //激活并绑定纹理  记得用GL_TEXTURE0  GL_TEXTURE1 等，不要使用0和1!
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture[0]);
+        glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture[1]);
 
         //绘制当前VAO的EBO
