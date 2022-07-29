@@ -4,6 +4,7 @@
 
 #include "Shader.h"
 
+using namespace std;
 
 Shader::Shader(const string &vertexPath, const string &fragmentPath) {
     string vertexCode;

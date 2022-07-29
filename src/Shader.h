@@ -11,21 +11,22 @@
 #include <sstream>
 #include <iostream>
 
-using namespace std;
+
 
 class Shader {
+
+
 public:
     unsigned int programId;
 
     //构造器 读取着色器的路径 生成programId
-    Shader(const string& vertexPath, const string& fragmentPath);
+    Shader(const std::string& vertexPath, const std::string& fragmentPath);
 
     void use() const;
 
     void clear() const;
 
-    void setTexture(const string &textureName, int textureUnitId) const;
+    void setTexture(const std::string &textureName, int textureUnitId) const;
 };
-
 
 #endif //OPENGLTEST_SHADER_H
