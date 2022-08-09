@@ -25,6 +25,8 @@ public:
     void clear() const;
 
     void setTexture(const string &textureName, int textureUnitId) const;
+
+    void setUniformMatrix4fv(const float *matrix, const string &locationName) const;
 };
 
 

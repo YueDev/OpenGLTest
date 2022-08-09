@@ -82,6 +82,11 @@ Shader::Shader(const string &vertexPath, const string &fragmentPath) {
 
 }
 
+void Shader::setUniformMatrix4fv(const float * matrix, const string &locationName) const{
+    int location = glGetUniformLocation(programId, locationName.c_str());
+    glUniformMatrix4fv(location, 1, GL_FALSE, matrix);
+}
+
 void Shader::setTexture(const string& sample2DName, int textureUnitId) const {
     int location = glGetUniformLocation(programId, sample2DName.c_str());
     glUniform1i(location, textureUnitId);

@@ -2,6 +2,7 @@
 
 #include <stb_image.h>
 
+
 #include <iostream>
 #include <cmath>
 
@@ -19,13 +20,16 @@
 int screenW = 1920;
 int screenH = 1080;
 
+int imageW = 0;
+int imageH = 0;
+
 
 //顶点坐标的数组，会通过VBO传给显卡
 float vertices[] = {
-        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, // 左上角   纹理坐标
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // 左下角   纹理坐标
-        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  // 右下角  纹理坐标
-        0.5f, 0.5f, 0.0f, 1.0f, 1.0f, // 右上角  纹理坐标
+        -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, // 左上角   纹理坐标
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // 左下角   纹理坐标
+        1.0f, -1.0f, 0.0f, 1.0f, 0.0f,  // 右下角  纹理坐标
+        1.0f, 1.0f, 0.0f, 1.0f, 1.0f, // 右上角  纹理坐标
 };
 //索引 ebo用
 unsigned int indices[] = {
@@ -33,10 +37,14 @@ unsigned int indices[] = {
         0, 2, 3,
 };
 
+Shader *shader;
+
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
 void processInput(GLFWwindow *window);
+
+void setImageInitTransform();
 
 
 int main() {
@@ -130,9 +138,9 @@ int main() {
 
     //纹理
     //生成纹理，并绑定当前GL_TEXTURE_2D的纹理为GL_TEXTURE_2D
-    unsigned int texture[2];
-    glGenTextures(2, texture);
-    glBindTexture(GL_TEXTURE_2D, texture[0]);
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
     // 为当前绑定的纹理对象设置环绕、过滤方式
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -140,12 +148,10 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     //stb image 读取图片
-    int imageW;
-    int imageH;
     int imageChannels;
     //设置stb反转y轴
     stbi_set_flip_vertically_on_load(true);
-    auto *imageData = stbi_load("../src/resources/1.jpg", &imageW, &imageH, &imageChannels, 0);
+    auto *imageData = stbi_load("../src/resources/3.jpg", &imageW, &imageH, &imageChannels, 0);
     if (imageData) {
         //设置纹理数据
         //GL_TEXTURE_2D :纹理目标
@@ -167,33 +173,21 @@ int main() {
     //图片读取完成释放资源
     stbi_image_free(imageData);
 
-    //另一个纹理
-    glBindTexture(GL_TEXTURE_2D, texture[1]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    imageData = stbi_load("../src/resources/2.jpg", &imageW, &imageH, &imageChannels, 0);
-    if (imageData) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageW, imageH, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
-        cout << "load image2 error!" << endl;
-        return -1;
-    }
-    stbi_image_free(imageData);
-
-
-
 
     //创建着色器程序 并设置各种uniform
-    auto *shader = new Shader("../src/glsl/vertex_shader.glsl", "../src/glsl/fragment_shader.glsl");
     //在设置uniform之前一定要先使用当前的program
+    shader = new Shader("../src/glsl/vertex_shader.glsl", "../src/glsl/fragment_shader.glsl");
     shader->use();
 
+    setImageInitTransform();
+
+
     //设置纹理单元，这样着色器就知道每一个sampler2D对应几号纹理单元了
-    shader->setTexture("imageTexture1", 0);
-    shader->setTexture("imageTexture2", 1);
+    shader->setTexture("imageTexture", 0);
+
+
+    auto matrix = glm::mat4{1.0f};
+    shader->setUniformMatrix4fv(glm::value_ptr(matrix), "transform");
 
 
     // render loop 渲染循环
@@ -214,9 +208,8 @@ int main() {
 
         //激活并绑定纹理  记得用GL_TEXTURE0  GL_TEXTURE1 等，不要使用0和1!
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture[0]);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture[1]);
+        glBindTexture(GL_TEXTURE_2D, texture);
+
 
         //绘制当前VAO的EBO
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
@@ -233,17 +226,22 @@ int main() {
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
     //释放纹理
-    glDeleteTextures(2, texture);
+    glDeleteTextures(1, &texture);
     shader->clear();
+    delete shader;
 
     //程序结束 中止glfw
     glfwTerminate();
     return 0;
 }
 
+
 //应用的窗口大小改变时回调这个，重新设置opengl的视窗大小
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
+    screenW = width;
+    screenH = height;
+    setImageInitTransform();
 }
 
 //按键事件，按下返回，关闭window
@@ -253,6 +251,27 @@ void processInput(GLFWwindow *window) {
     }
 }
 
+//计算图片的初始缩放
+void setImageInitTransform() {
 
+    auto initMatrix = glm::mat4{1.0f};
+
+
+    float imageScale = (float) imageW / (float) imageH;
+    float screenScale = (float) screenW / (float) screenH;
+
+    if (imageScale > screenScale) {
+        //长图
+        float scale = 1.0f / imageScale * screenScale;
+        initMatrix = glm::scale(initMatrix, glm::vec3(1.0f, scale, 1.0f));
+    } else {
+        //宽图
+        float scale = imageScale * (1.0f / screenScale);
+        initMatrix = glm::scale(initMatrix, glm::vec3(scale, 1.0f, 1.0f));
+    }
+
+
+    shader->setUniformMatrix4fv(glm::value_ptr(initMatrix), "initTransform");
+}
 
 
