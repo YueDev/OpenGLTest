@@ -103,6 +103,7 @@ int main() {
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
     //解释ARRAY BUFFER里的数据
     //0 就是顶点着色器里的layout(location = 0)，表示数据是传送到0号
     //3  是顶点着色器里的属性有几个数据组成，我们定义的aPos是vec3，因此一个属性需要3个数据
@@ -119,7 +120,7 @@ int main() {
 
 
     //解绑当前的ARRAY_BUFFER，方便之后绑定其他的ARRAY_BUFFER 如果没必要建议不解绑，这里做演示
-    glBindBuffer(GL_ARRAY_BUFFER, 1);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     //===========================以上是VBO相关========================================
 
     //生成EBO，和VBO一样也是附着在VAO上
