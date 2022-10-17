@@ -251,8 +251,6 @@ int main() {
     shader->setTexture("hanaTexture", 0);
     shader->setTexture("stickerTexture", 1);
 
-
-
     //10个立方体的世界坐标，model矩阵做完旋转 后乘即可
     glm::vec3 cubePositions[] = {
             glm::vec3(0.0f, 0.0f, 0.0f),
@@ -273,9 +271,7 @@ int main() {
         //1、处理输入事件
         processInput(window);
 
-
         //2、进行渲染
-
         //设置清空屏幕颜色，RGBA,    设置状态
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         //清空屏幕，清空的是颜色，     使用状态  使用深度测试
@@ -288,12 +284,9 @@ int main() {
 //        float greenValue = (sin(time) / 2.0f) + 0.5f;
 //
 
-
         //连接完成后，使用program
         shader->useProgram();
         shader->setMix(mix);
-
-
 
         //坐标变换
         //定义模型矩阵，视图矩阵、投影矩阵
