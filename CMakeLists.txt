@@ -7,4 +7,4 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 link_directories(${PROJECT_SOURCE_DIR}/lib)
 add_executable(OpenGLTest src/main.cpp src/glad.c src/Shader.cpp src/Shader.h)
 
-target_link_libraries(OpenGLTest ${PROJECT_SOURCE_DIR}/lib/glfw3.dll )
+target_link_libraries(OpenGLTest glfw3)
